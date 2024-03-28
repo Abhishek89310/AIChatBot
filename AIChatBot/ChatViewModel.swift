@@ -26,7 +26,7 @@ class ChatViewModel: ChatViewModelProtocol {
     }
 
     private func generateAIResponse(to userMessage: String) async -> String {
-        let model = GenerativeModel(name: "gemini-pro", apiKey: "your-api")
+        let model = GenerativeModel(name: "gemini-pro", apiKey: "api_key")
         do {
             let response = try await model.generateContent(userMessage)
             return response.text ?? "No text generated"
