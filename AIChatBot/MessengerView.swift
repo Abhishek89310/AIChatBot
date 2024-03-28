@@ -6,16 +6,15 @@
 //
 
 import SwiftUI
-import GoogleGenerativeAI
+
 
 struct MessengerView: View {
-    @State private var userInput = ""
-    @State private var messages: [Message] = []
+    @ObservedObject var viewModel: ChatViewModel
 
     var body: some View {
         VStack {
             ScrollView {
-                ForEach(messages) { message in
+                ForEach(viewModel.messages) { message in
                     HStack {
                         if message.isFromUser {
                             Spacer()
@@ -37,35 +36,12 @@ struct MessengerView: View {
             }
 
             HStack {
-                TextField("Type a message...", text: $userInput)
+                TextField("Type a message...", text: $viewModel.userInput)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                Button(action: sendMessage) {
+                Button(action: viewModel.sendMessage) {
                     Text("Send")
                 }
             }.padding()
-        }
-    }
-
-    func sendMessage() {
-        let userMessage = Message(text: userInput, isFromUser: true)
-        messages.append(userMessage)
-
-        userInput = ""
-
-        Task {
-            let aiResponseText = await generateAIResponse(to: userMessage.text)
-            let aiMessage = Message(text: aiResponseText, isFromUser: false)
-            messages.append(aiMessage)
-        }
-    }
-
-    func generateAIResponse(to userMessage: String) async -> String {
-        let model = GenerativeModel(name: "gemini-pro", apiKey: "your-api")
-        do {
-            let response = try await model.generateContent(userMessage)
-            return response.text ?? "No text generated"
-        } catch {
-            return "Error generating content: \(error)"
         }
     }
 }
@@ -77,5 +53,5 @@ struct Message: Identifiable {
 }
 
 #Preview {
-    MessengerView()
+    MessengerView(viewModel: ChatViewModel())
 }
