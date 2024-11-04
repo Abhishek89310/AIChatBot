@@ -36,6 +36,7 @@ struct MessengerView: View {
                   }
 
             HStack {
+                // adding textfield
                 TextField("Type a message...", text: $viewModel.userInput)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 Button(action: viewModel.sendMessage) {
